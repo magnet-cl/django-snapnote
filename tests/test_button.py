@@ -40,8 +40,10 @@ def test_purge_and_checks(make_ticket, png, settings):
     assert Ticket.objects.count() == 1
 
 
-def test_unaccent_warning_on_sqlite(settings):
+def test_unaccent_warning_only_without_postgres(settings):
     from django.core.checks import run_checks
+    from django.db import connection
 
     settings.SNAPNOTE_SEARCH_UNACCENT = True
-    assert any(m.id == "snapnote.W001" for m in run_checks())
+    warned = any(m.id == "snapnote.W001" for m in run_checks())
+    assert warned == (connection.vendor != "postgresql")
