@@ -1,0 +1,186 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-snapnote\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Snapnote"
+msgstr "Snapnote"
+
+msgid "open"
+msgstr "abierto"
+
+msgid "closed"
+msgstr "cerrado"
+
+msgid "title"
+msgstr "título"
+
+msgid "description"
+msgstr "descripción"
+
+msgid "page url"
+msgstr "URL de la página"
+
+msgid "screenshot"
+msgstr "captura"
+
+msgid "annotations"
+msgstr "anotaciones"
+
+msgid "status"
+msgstr "estado"
+
+msgid "reported by"
+msgstr "reportado por"
+
+msgid "closed at"
+msgstr "cerrado el"
+
+msgid "closed by"
+msgstr "cerrado por"
+
+msgid "created at"
+msgstr "creado el"
+
+msgid "updated at"
+msgstr "actualizado el"
+
+msgid "ticket"
+msgstr "ticket"
+
+msgid "tickets"
+msgstr "tickets"
+
+msgid "Page"
+msgstr "Página"
+
+msgid "Ticket"
+msgstr "Ticket"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "All"
+msgstr "Todos"
+
+msgid "The image is too large (max %(mb)s MB)."
+msgstr "La imagen es demasiado grande (máx. %(mb)s MB)."
+
+msgid "Unsupported image format."
+msgstr "Formato de imagen no soportado."
+
+msgid "The image is too large (max %(px)s px per side)."
+msgstr "La imagen es demasiado grande (máx. %(px)s px por lado)."
+
+msgid "Upload a valid image."
+msgstr "Sube una imagen válida."
+
+msgid "Enter an http or https URL."
+msgstr "Ingresa una URL http o https."
+
+msgid "Report a problem"
+msgstr "Reportar un problema"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Preview"
+msgstr "Vista previa"
+
+msgid "Edit annotations"
+msgstr "Editar anotaciones"
+
+msgid "Send"
+msgstr "Enviar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Sending…"
+msgstr "Enviando…"
+
+msgid "Thanks! Your report was sent."
+msgstr "¡Gracias! Tu reporte fue enviado."
+
+msgid "The report could not be sent. Try again."
+msgstr "No se pudo enviar el reporte. Inténtalo de nuevo."
+
+msgid "Could not capture the screen. You can attach a screenshot instead."
+msgstr "No se pudo capturar la pantalla. Puedes adjuntar una captura."
+
+msgid "Attach a screenshot"
+msgstr "Adjuntar una captura"
+
+msgid "Pen"
+msgstr "Lápiz"
+
+msgid "Rectangle"
+msgstr "Rectángulo"
+
+msgid "Text"
+msgstr "Texto"
+
+msgid "Undo"
+msgstr "Deshacer"
+
+msgid "Clear all"
+msgstr "Borrar todo"
+
+msgid "Done"
+msgstr "Listo"
+
+msgid "The title is required."
+msgstr "El título es obligatorio."
+
+msgid "Tickets"
+msgstr "Tickets"
+
+msgid "Filter"
+msgstr "Filtrar"
+
+msgid "Reported by"
+msgstr "Reportado por"
+
+msgid "Created at"
+msgstr "Creado el"
+
+msgid "No tickets found."
+msgstr "No se encontraron tickets."
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Reopen"
+msgstr "Reabrir"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Closed"
+msgstr "Cerrado"
+
+msgid "Show annotations"
+msgstr "Mostrar anotaciones"
+
+msgid "Screenshot"
+msgstr "Captura"
+
+msgid "Annotations"
+msgstr "Anotaciones"
+
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgid "Are you sure you want to delete \"%(object)s\"?"
+msgstr "¿Seguro que quieres eliminar \"%(object)s\"?"

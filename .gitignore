@@ -48,3 +48,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+.venv/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+build/

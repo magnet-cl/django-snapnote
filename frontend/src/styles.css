@@ -1,0 +1,70 @@
+:host {
+  all: initial;
+  --snapnote-accent: #e5383b;
+  --snapnote-accent-text: #fff;
+  --snapnote-z-index: 2147483000;
+  --snapnote-font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.snapnote, .snapnote * { box-sizing: border-box; }
+.snapnote { font-family: var(--snapnote-font); font-size: 14px; color: #1f2933; line-height: 1.4; }
+[hidden] { display: none !important; }
+
+.snapnote-fab {
+  position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: var(--snapnote-z-index);
+  width: 3.25rem; height: 3.25rem; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--snapnote-accent-text); background: var(--snapnote-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.snapnote-toast {
+  position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: var(--snapnote-z-index);
+  padding: .7rem 1rem; border-radius: .4rem; background: #1e6b34; color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.snapnote-backdrop {
+  position: fixed; inset: 0; z-index: var(--snapnote-z-index); overflow: auto;
+  display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+.snapnote-modal { width: 100%; max-width: 40rem; background: #fff; border-radius: .5rem; box-shadow: 0 8px 30px rgba(0, 0, 0, .35); }
+.snapnote-modal-header, .snapnote-modal-footer { display: flex; align-items: center; gap: .5rem; padding: .8rem 1rem; }
+.snapnote-modal-header { justify-content: space-between; border-bottom: 1px solid #e5e7eb; }
+.snapnote-modal-header h2 { margin: 0; font-size: 1.1rem; }
+.snapnote-modal-footer { justify-content: flex-end; border-top: 1px solid #e5e7eb; }
+.snapnote-modal-body { padding: 1rem; display: flex; flex-direction: column; gap: .8rem; }
+.snapnote-close { border: 0; background: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: inherit; }
+.snapnote-field { display: flex; flex-direction: column; gap: .25rem; }
+.snapnote-field > span, .snapnote-label { font-weight: 600; }
+.snapnote-field input, .snapnote-field textarea {
+  font: inherit; padding: .45rem .6rem; border: 1px solid #c5cad1; border-radius: .3rem; width: 100%;
+}
+.snapnote-alert { padding: .6rem .8rem; border-radius: .3rem; background: #fff4e5; color: #8a4b00; }
+.snapnote-gap { margin-top: .5rem; }
+.snapnote-btn {
+  font: inherit; display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .8rem;
+  color: inherit; background: #fff; border: 1px solid #c5cad1; border-radius: .3rem; cursor: pointer;
+}
+.snapnote-btn:disabled { opacity: .5; cursor: default; }
+.snapnote-btn-primary { color: var(--snapnote-accent-text); background: var(--snapnote-accent); border-color: var(--snapnote-accent); }
+
+.snapnote-preview { position: relative; display: inline-block; max-width: 100%; border: 1px solid #d0d4d9; }
+.snapnote-preview img { display: block; max-width: 100%; max-height: 16rem; }
+.snapnote-preview .snapnote-preview-annotations { pointer-events: none; position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.snapnote-editor {
+  user-select: none; -webkit-user-select: none;
+  position: fixed; inset: 0; z-index: calc(var(--snapnote-z-index) + 1);
+  display: flex; flex-direction: column; background: #1f2933;
+}
+.snapnote-editor-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem 1rem; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .3); }
+.snapnote-spacer { flex: 1; }
+.snapnote-editor-tool { position: relative; }
+.snapnote-editor-kbd { position: absolute; right: 2px; bottom: 0; font: inherit; font-size: 10px; line-height: 1; opacity: .7; }
+.snapnote-editor-stage { position: relative; flex: 1; min-height: 0; }
+.snapnote-editor-image, .snapnote-editor-canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.snapnote-editor-image { pointer-events: none; }
+.snapnote-editor-canvas { touch-action: none; cursor: crosshair; }
+.snapnote-editor-text-input {
+  position: absolute; padding: 0 .25rem; font-family: sans-serif; font-weight: 700;
+  color: var(--snapnote-accent); background: rgba(255, 255, 255, .85); border: 1px dashed var(--snapnote-accent); outline: 0;
+}

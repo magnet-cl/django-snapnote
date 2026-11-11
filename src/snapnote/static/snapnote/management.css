@@ -1,0 +1,26 @@
+:root {
+  --snapnote-accent: #e5383b;
+  --snapnote-border: #d0d4d9;
+  --snapnote-muted: #6b7280;
+}
+.snapnote-body { margin: 0; font-family: system-ui, sans-serif; color: #1f2933; }
+.snapnote-wrap { max-width: 72rem; margin: 0 auto; padding: 1rem; }
+.snapnote-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.snapnote-table th, .snapnote-table td { border: 1px solid var(--snapnote-border); padding: .4rem .6rem; text-align: left; vertical-align: top; }
+.snapnote-detail th { width: 10rem; background: #f3f4f6; }
+.snapnote-empty { text-align: center; color: var(--snapnote-muted); }
+.snapnote-filter { display: flex; gap: .5rem; flex-wrap: wrap; }
+.snapnote-actions { display: flex; gap: .5rem; }
+.snapnote-btn { display: inline-block; padding: .35rem .8rem; border: 1px solid var(--snapnote-border); border-radius: .3rem; background: #fff; color: inherit; text-decoration: none; cursor: pointer; font: inherit; }
+.snapnote-btn-ok { background: #2f9e44; border-color: #2f9e44; color: #fff; }
+.snapnote-btn-danger { color: var(--snapnote-accent); border-color: var(--snapnote-accent); }
+.snapnote-badge { padding: .1rem .5rem; border-radius: 1rem; font-size: .85em; }
+.snapnote-badge-open { background: #fde8e8; color: #b42318; }
+.snapnote-badge-closed { background: #e6f4ea; color: #1e6b34; }
+.snapnote-alert { padding: .8rem; background: #fde8e8; border-radius: .3rem; }
+.snapnote-pagination { display: flex; gap: 1rem; justify-content: center; }
+.snapnote-shot-frame { position: relative; display: inline-block; max-width: 100%; border: 1px solid var(--snapnote-border); }
+.snapnote-shot-frame img { display: block; max-width: 100%; }
+.snapnote-shot-frame .snapnote-annotations { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.snapnote-shot { margin-top: 1rem; }
+.snapnote-shot:has(#snapnote-ann-toggle:not(:checked)) .snapnote-annotations { display: none; }

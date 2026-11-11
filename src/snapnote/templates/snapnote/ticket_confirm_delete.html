@@ -1,0 +1,12 @@
+{% extends snapnote_base_template %}
+{% load i18n static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'snapnote/management.css' %}">
+<div class="snapnote-wrap">
+  <form method="post">{% csrf_token %}
+    <p class="snapnote-alert">{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</p>
+    <button class="snapnote-btn snapnote-btn-danger" type="submit">{% trans "Confirm" %}</button>
+    <a class="snapnote-btn" href="{{ object.get_absolute_url }}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

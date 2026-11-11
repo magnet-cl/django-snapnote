@@ -1,0 +1,42 @@
+{% extends snapnote_base_template %}
+{% load i18n static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'snapnote/management.css' %}">
+{% with ticket=object %}
+<div class="snapnote-wrap">
+  <p><a href="{% url 'snapnote:ticket_list' %}">&larr; {% trans "Tickets" %}</a></p>
+  <h1>{{ ticket }}</h1>
+  <div class="snapnote-actions">
+    {% if perms.snapnote.change_ticket %}
+      {% if ticket.status == "open" %}
+      <form method="post" action="{% url 'snapnote:ticket_close' ticket.pk %}">{% csrf_token %}<button class="snapnote-btn snapnote-btn-ok" type="submit">{% trans "Close" %}</button></form>
+      {% else %}
+      <form method="post" action="{% url 'snapnote:ticket_reopen' ticket.pk %}">{% csrf_token %}<button class="snapnote-btn" type="submit">{% trans "Reopen" %}</button></form>
+      {% endif %}
+    {% endif %}
+    {% if perms.snapnote.delete_ticket %}
+      <a class="snapnote-btn snapnote-btn-danger" href="{% url 'snapnote:ticket_delete' ticket.pk %}">{% trans "Delete" %}</a>
+    {% endif %}
+  </div>
+  <table class="snapnote-table snapnote-detail">
+    <tr><th>{% trans "Status" %}</th><td>{% include "snapnote/includes/status_badge.html" %}</td></tr>
+    <tr><th>{% trans "Reported by" %}</th><td>{{ ticket.reported_by|default:"-" }}</td></tr>
+    <tr><th>{% trans "Created at" %}</th><td>{{ ticket.created_at }}</td></tr>
+    {% if ticket.closed_at %}<tr><th>{% trans "Closed" %}</th><td>{{ ticket.closed_at }} ({{ ticket.closed_by|default:"-" }})</td></tr>{% endif %}
+    <tr><th>{% trans "Page" %}</th><td>{% if ticket.safe_page_url %}<a href="{{ ticket.safe_page_url }}" rel="noopener noreferrer">{{ ticket.page_url }}</a>{% else %}{{ ticket.page_url }}{% endif %}</td></tr>
+    <tr><th>{% trans "Description" %}</th><td>{{ ticket.description|linebreaksbr|default:"-" }}</td></tr>
+  </table>
+  {% if ticket.screenshot %}
+  <div class="snapnote-shot">
+    {% if ticket.annotations %}
+    <label class="snapnote-switch"><input type="checkbox" id="snapnote-ann-toggle" checked> {% trans "Show annotations" %}</label>
+    {% endif %}
+    <div class="snapnote-shot-frame">
+      <img src="{{ ticket.screenshot.url }}" alt="{% trans 'Screenshot' %}">
+      {% if ticket.annotations %}<img class="snapnote-annotations" src="{{ ticket.annotations.url }}" alt="{% trans 'Annotations' %}">{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endwith %}
+{% endblock %}

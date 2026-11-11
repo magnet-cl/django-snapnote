@@ -1,0 +1,39 @@
+{% extends snapnote_base_template %}
+{% load i18n static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'snapnote/management.css' %}">
+<div class="snapnote-wrap">
+  <h1>{% trans "Tickets" %}</h1>
+  <form method="get" class="snapnote-filter">
+    {{ filter_form.q }} {{ filter_form.status }}
+    <button type="submit" class="snapnote-btn">{% trans "Filter" %}</button>
+  </form>
+  <table class="snapnote-table">
+    <thead><tr>
+      <th>#</th><th>{% trans "Title" %}</th><th>{% trans "Page" %}</th>
+      <th>{% trans "Reported by" %}</th><th>{% trans "Status" %}</th><th>{% trans "Created at" %}</th>
+    </tr></thead>
+    <tbody>
+    {% for ticket in object_list %}
+      <tr>
+        <td>{{ ticket.pk }}</td>
+        <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.title }}</a></td>
+        <td>{{ ticket.page_path }}</td>
+        <td>{{ ticket.reported_by|default:"-" }}</td>
+        <td>{% include "snapnote/includes/status_badge.html" %}</td>
+        <td>{{ ticket.created_at }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="snapnote-empty">{% trans "No tickets found." %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if is_paginated %}
+  <nav class="snapnote-pagination">
+    {% if page_obj.has_previous %}<a href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">&laquo;</a>{% endif %}
+    <span>{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ page_obj.next_page_number }}">&raquo;</a>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

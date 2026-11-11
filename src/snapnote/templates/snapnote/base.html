@@ -1,0 +1,12 @@
+{% load static %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snapnote</title>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="snapnote-body">
+  <main class="snapnote-page">{% block content %}{% endblock %}</main>
+</body>
+</html>
