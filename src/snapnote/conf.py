@@ -13,6 +13,15 @@ DEFAULTS = {
     "UPLOAD_TO": "snapnote/",
     "THROTTLE": "10/hour",
     "AUTO_INJECT": False,
+    # Jira notifier (snapnote.notifiers.jira_issue). URL, EMAIL, API_TOKEN and PROJECT are required.
+    "JIRA_URL": "",
+    "JIRA_EMAIL": "",
+    "JIRA_API_TOKEN": "",
+    "JIRA_PROJECT": "",
+    "JIRA_ISSUE_TYPE": "Bug",
+    "JIRA_LABELS": ["snapnote"],
+    "JIRA_ATTACH_IMAGES": True,
+    "JIRA_TIMEOUT": 10,
 }
 
 

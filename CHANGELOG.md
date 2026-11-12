@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Jira notifier (`snapnote.notifiers.jira_issue`) with image attachments and a system check.
+- CI: Django 6.1 added to the matrix.
+
 ## 0.1.1
 
 - First release on PyPI (0.1.0 was a TestPyPI dry run).

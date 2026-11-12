@@ -19,4 +19,17 @@ def check_settings(app_configs, **kwargs):
                 id="snapnote.W001",
             )
         )
+    notifiers = conf.get("NOTIFIERS")
+    if "snapnote.notifiers.jira_issue" in notifiers:
+        from .notifiers import JIRA_REQUIRED
+
+        missing = [f"SNAPNOTE_{name}" for name in JIRA_REQUIRED if not conf.get(name)]
+        if missing:
+            messages.append(
+                Warning(
+                    "The Jira notifier is enabled but misconfigured.",
+                    hint="Missing settings: " + ", ".join(missing),
+                    id="snapnote.W002",
+                )
+            )
     return messages

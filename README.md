@@ -67,6 +67,27 @@ def slack(ticket, url):
 SNAPNOTE_NOTIFIERS = ["snapnote.notifiers.email", "myproject.notifiers.slack"]
 ```
 
+### Jira notifier
+
+Built in, opt-in and dependency-free (stdlib only). It creates a Jira Cloud issue per ticket, with the
+page URL, a link to the Snapnote ticket and, optionally, the screenshot and annotations attached:
+
+```python
+SNAPNOTE_NOTIFIERS = ["snapnote.notifiers.email", "snapnote.notifiers.jira_issue"]
+SNAPNOTE_JIRA_URL = "https://yourcompany.atlassian.net"
+SNAPNOTE_JIRA_EMAIL = "bot@yourcompany.com"
+SNAPNOTE_JIRA_API_TOKEN = os.environ["JIRA_API_TOKEN"]   # https://id.atlassian.com/manage-profile/security/api-tokens
+SNAPNOTE_JIRA_PROJECT = "APP"                            # project key
+# optional: SNAPNOTE_JIRA_ISSUE_TYPE = "Bug", SNAPNOTE_JIRA_LABELS = ["snapnote"],
+#           SNAPNOTE_JIRA_ATTACH_IMAGES = True, SNAPNOTE_JIRA_TIMEOUT = 10
+```
+
+`manage.py check` warns (`snapnote.W002`) if a required setting is missing. Use a dedicated
+Jira account with access only to that project. Notifiers run synchronously after commit with the
+timeout above; for heavy use, wrap it in your own task queue. Screenshots may contain sensitive
+data: they are attached to the issue, so keep `SNAPNOTE_JIRA_ATTACH_IMAGES = False` if the Jira
+project is broader than who may see them.
+
 ## Security and deployment notes
 
 - **Screenshots can contain sensitive data.** Serve `MEDIA_ROOT` only to authenticated staff (or use a
