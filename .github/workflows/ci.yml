@@ -50,4 +50,3 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install build twine && python -m build && twine check dist/*
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with: { repository-url: https://test.pypi.org/legacy/ }  # TestPyPI first; remove for real PyPI
