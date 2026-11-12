@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - Jira notifier (`snapnote.notifiers.jira_issue`) with image attachments and a system check.
 - CI: Django 6.1 added to the matrix.
