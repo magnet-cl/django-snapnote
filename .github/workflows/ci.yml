@@ -7,10 +7,10 @@ jobs:
       fail-fast: false
       matrix:
         python: ["3.10", "3.12"]
-        django: ["4.2", "5.0", "5.1", "5.2"]
+        django: ["4.2", "5.0", "5.1", "5.2", "6.1"]
         db: [sqlite, postgres]
         exclude:
-          - { python: "3.10", django: "5.2" }
+          - { python: "3.10", django: "6.1" }  # Django 6.1 needs Python >= 3.12
     services:
       postgres:
         image: postgres:16
