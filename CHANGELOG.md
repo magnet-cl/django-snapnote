@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `snapnote_export` command: exports tickets (markdown, JSON, images and an annotated composite) for people or AI assistants.
+
 ## 0.2.0
 
 - Jira notifier (`snapnote.notifiers.jira_issue`) with image attachments and a system check.

@@ -88,6 +88,24 @@ timeout above; for heavy use, wrap it in your own task queue. Screenshots may co
 data: they are attached to the issue, so keep `SNAPNOTE_JIRA_ATTACH_IMAGES = False` if the Jira
 project is broader than who may see them.
 
+## Export tickets for an AI coding assistant
+
+```bash
+python manage.py snapnote_export 42            # one or more IDs
+python manage.py snapnote_export --open        # every open ticket
+python manage.py snapnote_export 42 --output /tmp/tickets
+```
+
+Writes `snapnote-export/ticket-42/` with `ticket.md`, `ticket.json`, `screenshot.png`,
+`annotations.png` and `screenshot_annotated.png` (the screenshot with the user's marks drawn on
+it), so a tool like Claude Code can open the folder and see the problem without database access.
+It reads from the database of the environment where it runs: to export production tickets, run it
+there (or on a restored dump) and copy the folder.
+
+The text of a ticket is written by an end user, so `ticket.md` labels it as untrusted data and
+places it in code fences; still review any change an assistant proposes before merging it, and
+do not export into a repository you will commit (screenshots can contain sensitive data).
+
 ## Security and deployment notes
 
 - **Screenshots can contain sensitive data.** Serve `MEDIA_ROOT` only to authenticated staff (or use a
