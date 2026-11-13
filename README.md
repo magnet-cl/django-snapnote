@@ -42,6 +42,7 @@ Then `python manage.py migrate`. Uploaded images use your `MEDIA_ROOT`/storage.
 | `SNAPNOTE_MAX_DIMENSION` | `8000` | Max width/height in pixels |
 | `SNAPNOTE_UPLOAD_TO` | `"snapnote/"` | Prefix in the storage |
 | `SNAPNOTE_THROTTLE` | `"10/hour"` | Reports per user (`second`, `minute`, `hour`, `day`); uses Django's cache. `None` disables |
+| `SNAPNOTE_BASE_URL` | `""` | Public site URL used to link tickets from Jira issues created by `snapnote_retry_jira` |
 | `SNAPNOTE_AUTO_INJECT` | `False` | Also add `snapnote.middleware.AutoInjectMiddleware` to `MIDDLEWARE` to insert the button automatically. Incompatible with strict CSP and streaming responses |
 
 Customise the look by overriding CSS variables on `#snapnote-root`
@@ -85,6 +86,20 @@ SNAPNOTE_JIRA_PROJECT = "APP"                            # project key
 The issue key is saved in `Ticket.jira_key` as soon as Jira creates the issue (even if an attachment
 fails later), shown with a link in the views and admin, and exported by `snapnote_export`.
 Tickets created before enabling the notifier have no key.
+
+If Jira fails, the ticket is still created and the error is stored (without credentials, max 300
+characters) in `Ticket.jira_error`: the list and detail views show a "Jira failed" badge with the
+error, the admin has a Jira filter, and users with `change_ticket` get a **Retry Jira** button in the
+detail view. To retry in bulk (for example after a Jira outage):
+
+```bash
+python manage.py snapnote_retry_jira [--dry-run]
+```
+
+Set `SNAPNOTE_BASE_URL = "https://your-site.example.com"` so those issues link back to the ticket.
+A retry never creates a second issue for a ticket that already has a key. If the issue is created but
+an attachment fails, the key is kept and the error is shown next to it. Failures that happened before
+this was recorded (versions up to 0.4.0) cannot be retried automatically.
 
 `manage.py check` warns (`snapnote.W002`) if a required setting is missing. Use a dedicated
 Jira account with access only to that project. Notifiers run synchronously after commit with the

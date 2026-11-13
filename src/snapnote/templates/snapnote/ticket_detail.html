@@ -23,7 +23,18 @@
     <tr><th>{% trans "Reported by" %}</th><td>{{ ticket.reported_by|default:"-" }}</td></tr>
     <tr><th>{% trans "Created at" %}</th><td>{{ ticket.created_at }}</td></tr>
     {% if ticket.closed_at %}<tr><th>{% trans "Closed" %}</th><td>{{ ticket.closed_at }} ({{ ticket.closed_by|default:"-" }})</td></tr>{% endif %}
-    {% if ticket.jira_key %}<tr><th>Jira</th><td>{% if ticket.jira_url %}<a href="{{ ticket.jira_url }}" rel="noopener noreferrer">{{ ticket.jira_key }}</a>{% else %}{{ ticket.jira_key }}{% endif %}</td></tr>{% endif %}
+    {% if ticket.jira_key or ticket.jira_error %}<tr><th>Jira</th><td>
+      {% if ticket.jira_key %}
+        {% if ticket.jira_url %}<a href="{{ ticket.jira_url }}" rel="noopener noreferrer">{{ ticket.jira_key }}</a>{% else %}{{ ticket.jira_key }}{% endif %}
+        {% if ticket.jira_error %}<span class="snapnote-badge snapnote-badge-open">{{ ticket.jira_error }}</span>{% endif %}
+      {% else %}
+        <span class="snapnote-badge snapnote-badge-open">{% trans "Jira failed" %}</span>
+        <code>{{ ticket.jira_error }}</code>
+        {% if perms.snapnote.change_ticket and jira_enabled %}
+        <form method="post" action="{% url 'snapnote:ticket_jira_retry' ticket.pk %}" style="display:inline">{% csrf_token %}<button class="snapnote-btn" type="submit">{% trans "Retry Jira" %}</button></form>
+        {% endif %}
+      {% endif %}
+    </td></tr>{% endif %}
     <tr><th>{% trans "Page" %}</th><td>{% if ticket.safe_page_url %}<a href="{{ ticket.safe_page_url }}" rel="noopener noreferrer">{{ ticket.page_url }}</a>{% else %}{{ ticket.page_url }}{% endif %}</td></tr>
     <tr><th>{% trans "Description" %}</th><td>{{ ticket.description|linebreaksbr|default:"-" }}</td></tr>
   </table>

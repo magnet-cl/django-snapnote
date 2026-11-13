@@ -5,7 +5,7 @@
 <div class="snapnote-wrap">
   <h1>{% trans "Tickets" %}</h1>
   <form method="get" class="snapnote-filter">
-    {{ filter_form.q }} {{ filter_form.status }}
+    {{ filter_form.q }} {{ filter_form.status }}{% if jira_enabled %} {{ filter_form.jira }}{% endif %}
     <button type="submit" class="snapnote-btn">{% trans "Filter" %}</button>
   </form>
   <table class="snapnote-table">
@@ -19,7 +19,7 @@
         <td>{{ ticket.pk }}</td>
         <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.title }}</a></td>
         <td>{{ ticket.page_path }}</td>
-        <td>{% if ticket.jira_url %}<a href="{{ ticket.jira_url }}" rel="noopener noreferrer">{{ ticket.jira_key }}</a>{% else %}{{ ticket.jira_key|default:"-" }}{% endif %}</td>
+        <td>{% if ticket.jira_url %}<a href="{{ ticket.jira_url }}" rel="noopener noreferrer">{{ ticket.jira_key }}</a>{% elif ticket.jira_key %}{{ ticket.jira_key }}{% elif ticket.jira_error %}<span class="snapnote-badge snapnote-badge-open" title="{{ ticket.jira_error }}">{% trans "Jira failed" %}</span>{% else %}-{% endif %}</td>
         <td>{{ ticket.reported_by|default:"-" }}</td>
         <td>{% include "snapnote/includes/status_badge.html" %}</td>
         <td>{{ ticket.created_at }}</td>

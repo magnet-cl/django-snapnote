@@ -10,5 +10,6 @@ urlpatterns = [
     path("<int:pk>/", views.TicketDetailView.as_view(), name="ticket_detail"),
     path("<int:pk>/close/", views.StatusChangeView.as_view(close=True), name="ticket_close"),
     path("<int:pk>/reopen/", views.StatusChangeView.as_view(close=False), name="ticket_reopen"),
+    path("<int:pk>/jira/retry/", views.JiraRetryView.as_view(), name="ticket_jira_retry"),
     path("<int:pk>/delete/", views.TicketDeleteView.as_view(), name="ticket_delete"),
 ]

@@ -17,6 +17,16 @@ def annotations_upload_to(instance, filename):
 
 
 class TicketQuerySet(models.QuerySet):
+    def jira(self, status):
+        """Filters by Jira state: "ok" (issue created), "failed" or "none" (never attempted)."""
+        if status == "ok":
+            return self.exclude(jira_key="")
+        if status == "failed":
+            return self.filter(jira_key="").exclude(jira_error="")
+        if status == "none":
+            return self.filter(jira_key="", jira_error="")
+        return self
+
     def search(self, term):
         term = (term or "").strip()
         if not term:
@@ -77,6 +87,8 @@ class Ticket(models.Model):
     )
     # Key of the Jira issue created by snapnote.notifiers.jira_issue (e.g. "APP-7").
     jira_key = models.CharField(_("Jira key"), max_length=50, blank=True, db_index=True)
+    # Last error from the Jira notifier (empty when it worked or was never attempted).
+    jira_error = models.CharField(_("Jira error"), max_length=300, blank=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
@@ -107,6 +119,13 @@ class Ticket(models.Model):
         """Link to the Jira issue, or "" if there is none or Jira is not configured."""
         base = conf.get("JIRA_URL").rstrip("/")
         return f"{base}/browse/{self.jira_key}" if self.jira_key and base else ""
+
+    @property
+    def jira_status(self):
+        """ "ok", "partial" (issue created but an attachment failed), "failed" or ""."""
+        if self.jira_key:
+            return "partial" if self.jira_error else "ok"
+        return "failed" if self.jira_error else ""
 
     @property
     def safe_page_url(self):

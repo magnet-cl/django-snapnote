@@ -1,3 +1,4 @@
+import logging
 import time
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -12,6 +13,8 @@ from . import conf
 from .forms import TicketFilterForm, TicketReportForm
 from .models import Ticket
 from .signals import ticket_created
+
+logger = logging.getLogger("snapnote")
 
 PERIODS = {"second": 1, "minute": 60, "hour": 3600, "day": 86400}
 
@@ -74,6 +77,7 @@ class ManagementMixin(PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["snapnote_base_template"] = conf.get("BASE_TEMPLATE") or "snapnote/base.html"
+        context["jira_enabled"] = conf.jira_enabled()
         return context
 
 
@@ -120,4 +124,26 @@ class StatusChangeView(ManagementMixin, View):
             ticket.close(request.user)
         else:
             ticket.reopen()
+        return HttpResponseRedirect(reverse("snapnote:ticket_detail", kwargs={"pk": ticket.pk}))
+
+
+class JiraRetryView(ManagementMixin, View):
+    """Retries creating the Jira issue of a ticket whose creation failed."""
+
+    permission_required = "snapnote.change_ticket"
+    http_method_names = ["post"]
+
+    def post(self, request, pk):
+        from .notifiers import jira_issue
+
+        if not conf.jira_enabled():
+            raise Http404
+        ticket = get_object_or_404(Ticket, pk=pk)
+        if not ticket.jira_key:  # never create a second issue for the same ticket
+            try:
+                jira_issue(ticket, request.build_absolute_uri(ticket.get_absolute_url()))
+            except Exception:
+                logger.exception(
+                    "Jira retry failed for ticket %s", ticket.pk
+                )  # also stored in jira_error
         return HttpResponseRedirect(reverse("snapnote:ticket_detail", kwargs={"pk": ticket.pk}))

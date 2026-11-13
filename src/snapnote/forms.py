@@ -74,10 +74,21 @@ class TicketFilterForm(forms.Form):
         label=_("Status"), required=False, choices=[("", _("All"))] + Ticket.Status.choices
     )
 
+    jira = forms.ChoiceField(
+        label="Jira",
+        required=False,
+        choices=[
+            ("", _("All")),
+            ("ok", _("In Jira")),
+            ("failed", _("Jira failed")),
+            ("none", _("No Jira")),
+        ],
+    )
+
     def filter(self, queryset):
         if not self.is_valid():
             return queryset
-        queryset = queryset.search(self.cleaned_data["q"])
+        queryset = queryset.search(self.cleaned_data["q"]).jira(self.cleaned_data["jira"])
         if self.cleaned_data["status"]:
             queryset = queryset.filter(status=self.cleaned_data["status"])
         return queryset

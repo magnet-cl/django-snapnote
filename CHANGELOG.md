@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Jira failures are visible: `Ticket.jira_error` (migration `0003`), a "Jira failed" badge in the list and detail,
+  a Jira filter in the list and admin, a **Retry Jira** button and `manage.py snapnote_retry_jira`.
+- New setting `SNAPNOTE_BASE_URL`.
+
 ## 0.4.0
 
 - The Jira notifier stores the issue key in `Ticket.jira_key` (new migration `0002`). It is shown, with a link, in the

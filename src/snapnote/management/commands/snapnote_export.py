@@ -78,6 +78,7 @@ class Command(BaseCommand):
             "status": ticket.status,
             "page_url": ticket.page_url,
             "jira_key": ticket.jira_key or None,
+            "jira_error": ticket.jira_error or None,
             "reported_by": str(ticket.reported_by) if ticket.reported_by_id else None,
             "created_at": ticket.created_at.isoformat(),
             "closed_at": ticket.closed_at.isoformat() if ticket.closed_at else None,

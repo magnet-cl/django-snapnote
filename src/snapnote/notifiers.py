@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import urllib.error
 import urllib.request
 import uuid
 
@@ -34,7 +35,7 @@ def email(ticket, absolute_url):
     )
 
 
-JIRA_REQUIRED = ("JIRA_URL", "JIRA_EMAIL", "JIRA_API_TOKEN", "JIRA_PROJECT")
+JIRA_REQUIRED = conf.JIRA_REQUIRED
 
 
 def _jira_request(path, data, content_type, extra_headers=None):
@@ -52,6 +53,24 @@ def _jira_request(path, data, content_type, extra_headers=None):
     )
     with urllib.request.urlopen(request, timeout=conf.get("JIRA_TIMEOUT")) as response:  # noqa: S310
         return json.loads(response.read() or b"{}")
+
+
+def short_error(exc):
+    """One short line describing a failure, safe to show to staff (no credentials)."""
+    if isinstance(exc, urllib.error.HTTPError):
+        try:
+            body = exc.read().decode(errors="replace")
+        except Exception:
+            body = ""
+        text = f"HTTP {exc.code}: {body}"
+    elif isinstance(exc, urllib.error.URLError):
+        text = f"Connection error: {exc.reason}"
+    else:
+        text = f"{type(exc).__name__}: {exc}"
+    for secret in (conf.get("JIRA_API_TOKEN"), conf.get("JIRA_EMAIL")):
+        if secret:
+            text = text.replace(secret, "***")
+    return " ".join(text.split())[:300]
 
 
 def _adf_paragraph(*parts):
@@ -109,11 +128,18 @@ def jira_issue(ticket, absolute_url):
             "description": {"type": "doc", "version": 1, "content": blocks},
         }
     }
-    issue = _jira_request("/rest/api/3/issue", json.dumps(payload).encode(), "application/json")
-    key = issue["key"]
+    try:
+        issue = _jira_request("/rest/api/3/issue", json.dumps(payload).encode(), "application/json")
+        key = issue["key"]
+    except Exception as exc:
+        ticket.jira_error = short_error(exc)
+        ticket.save(update_fields=["jira_error"])
+        raise
     # Saved right away: the attachments below are best effort and must not lose the key.
     ticket.jira_key = key
-    ticket.save(update_fields=["jira_key"])
+    ticket.jira_error = ""
+    ticket.save(update_fields=["jira_key", "jira_error"])
+    failures = []
     if conf.get("JIRA_ATTACH_IMAGES"):
         for name in ("screenshot", "annotations"):
             image = getattr(ticket, name)
@@ -130,11 +156,15 @@ def jira_issue(ticket, absolute_url):
                     content_type,
                     {"X-Atlassian-Token": "no-check"},
                 )
-            except Exception:
+            except Exception as exc:
                 # The issue exists already; a missing image must not fail the notifier.
+                failures.append(f"{name}: {short_error(exc)}")
                 logger.exception(
                     "Could not attach %s of ticket %s to Jira issue %s", name, ticket.pk, key
                 )
+    if failures:
+        ticket.jira_error = ("Attachments failed - " + "; ".join(failures))[:300]
+        ticket.save(update_fields=["jira_error"])
     return key
 
 

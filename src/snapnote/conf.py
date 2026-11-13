@@ -22,6 +22,9 @@ DEFAULTS = {
     "JIRA_LABELS": ["snapnote"],
     "JIRA_ATTACH_IMAGES": True,
     "JIRA_TIMEOUT": 10,
+    # Public site URL (e.g. "https://intranet.example.com"), used to link tickets from Jira issues
+    # created outside a request (snapnote_retry_jira).
+    "BASE_URL": "",
 }
 
 
@@ -32,3 +35,12 @@ def get(name):
 def get_callable(name):
     value = get(name)
     return import_string(value) if isinstance(value, str) else value
+
+
+JIRA_NOTIFIER = "snapnote.notifiers.jira_issue"
+JIRA_REQUIRED = ("JIRA_URL", "JIRA_EMAIL", "JIRA_API_TOKEN", "JIRA_PROJECT")
+
+
+def jira_enabled():
+    """True if the Jira notifier is active and fully configured."""
+    return JIRA_NOTIFIER in get("NOTIFIERS") and all(get(name) for name in JIRA_REQUIRED)

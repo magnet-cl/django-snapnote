@@ -187,3 +187,18 @@ msgstr "¿Seguro que quieres eliminar \"%(object)s\"?"
 
 msgid "Jira key"
 msgstr "Clave de Jira"
+
+msgid "Jira error"
+msgstr "Error de Jira"
+
+msgid "In Jira"
+msgstr "En Jira"
+
+msgid "Jira failed"
+msgstr "Jira falló"
+
+msgid "No Jira"
+msgstr "Sin Jira"
+
+msgid "Retry Jira"
+msgstr "Reintentar Jira"
