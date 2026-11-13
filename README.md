@@ -82,6 +82,10 @@ SNAPNOTE_JIRA_PROJECT = "APP"                            # project key
 #           SNAPNOTE_JIRA_ATTACH_IMAGES = True, SNAPNOTE_JIRA_TIMEOUT = 10
 ```
 
+The issue key is saved in `Ticket.jira_key` as soon as Jira creates the issue (even if an attachment
+fails later), shown with a link in the views and admin, and exported by `snapnote_export`.
+Tickets created before enabling the notifier have no key.
+
 `manage.py check` warns (`snapnote.W002`) if a required setting is missing. Use a dedicated
 Jira account with access only to that project. Notifiers run synchronously after commit with the
 timeout above; for heavy use, wrap it in your own task queue. Screenshots may contain sensitive

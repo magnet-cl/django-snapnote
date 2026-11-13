@@ -111,6 +111,9 @@ def jira_issue(ticket, absolute_url):
     }
     issue = _jira_request("/rest/api/3/issue", json.dumps(payload).encode(), "application/json")
     key = issue["key"]
+    # Saved right away: the attachments below are best effort and must not lose the key.
+    ticket.jira_key = key
+    ticket.save(update_fields=["jira_key"])
     if conf.get("JIRA_ATTACH_IMAGES"):
         for name in ("screenshot", "annotations"):
             image = getattr(ticket, name)

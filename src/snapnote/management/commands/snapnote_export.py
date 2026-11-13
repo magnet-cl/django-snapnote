@@ -77,6 +77,7 @@ class Command(BaseCommand):
             "title": ticket.title,
             "status": ticket.status,
             "page_url": ticket.page_url,
+            "jira_key": ticket.jira_key or None,
             "reported_by": str(ticket.reported_by) if ticket.reported_by_id else None,
             "created_at": ticket.created_at.isoformat(),
             "closed_at": ticket.closed_at.isoformat() if ticket.closed_at else None,
@@ -87,6 +88,8 @@ class Command(BaseCommand):
 
         lines = [f"# Ticket #{ticket.pk}", "", NOTICE, "---", ""]
         lines += [f"- Status: {ticket.status}", f"- Page: {ticket.page_url}"]
+        if ticket.jira_key:
+            lines += [f"- Jira: {ticket.jira_key}"]
         lines += [
             f"- Reported by: {meta['reported_by'] or '-'}",
             f"- Created: {meta['created_at']}",

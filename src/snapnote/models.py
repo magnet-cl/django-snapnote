@@ -32,7 +32,7 @@ class TicketQuerySet(models.QuerySet):
         ):
             lookup = "unaccent__icontains"
         query = models.Q()
-        for field in ("title", "description", "page_url"):
+        for field in ("title", "description", "page_url", "jira_key"):
             query |= models.Q(**{f"{field}__{lookup}": term})
         return self.filter(query)
 
@@ -75,6 +75,8 @@ class Ticket(models.Model):
         blank=True,
         related_name="+",
     )
+    # Key of the Jira issue created by snapnote.notifiers.jira_issue (e.g. "APP-7").
+    jira_key = models.CharField(_("Jira key"), max_length=50, blank=True, db_index=True)
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 
@@ -99,6 +101,12 @@ class Ticket(models.Model):
         parts = urlsplit(self.page_url)
         path = parts.path or "/"
         return f"{path}?{parts.query}" if parts.query else path
+
+    @property
+    def jira_url(self):
+        """Link to the Jira issue, or "" if there is none or Jira is not configured."""
+        base = conf.get("JIRA_URL").rstrip("/")
+        return f"{base}/browse/{self.jira_key}" if self.jira_key and base else ""
 
     @property
     def safe_page_url(self):

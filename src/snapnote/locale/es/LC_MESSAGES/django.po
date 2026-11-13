@@ -184,3 +184,6 @@ msgstr "Confirmar"
 
 msgid "Are you sure you want to delete \"%(object)s\"?"
 msgstr "¿Seguro que quieres eliminar \"%(object)s\"?"
+
+msgid "Jira key"
+msgstr "Clave de Jira"

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The Jira notifier stores the issue key in `Ticket.jira_key` (new migration `0002`). It is shown, with a link, in the
+  list and detail views and the admin, is searchable, and is included in `snapnote_export`.
+
 ## 0.3.0
 
 - `snapnote_install_claude_command`: installs a `/ticket` command for Claude Code (fetch the ticket, fix it, open a PR).

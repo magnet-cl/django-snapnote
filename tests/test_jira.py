@@ -47,6 +47,9 @@ def test_creates_issue_and_attaches_images(jira, make_ticket, png):
     with mock.patch("urllib.request.urlopen", fake_urlopen(calls)):
         key = notifiers.jira_issue(ticket, "http://testserver/snapnote/1/")
     assert key == "APP-7"
+    ticket.refresh_from_db()
+    assert ticket.jira_key == "APP-7"
+    assert ticket.jira_url == "https://acme.atlassian.net/browse/APP-7"
     create, shot, ann = calls
     assert create.full_url == "https://acme.atlassian.net/rest/api/3/issue"
     assert create.get_header("Authorization").startswith("Basic ")
@@ -96,3 +99,33 @@ def test_check_warns_when_misconfigured(settings):
 def test_check_silent_when_configured(jira, settings):
     settings.SNAPNOTE_NOTIFIERS = ["snapnote.notifiers.jira_issue"]
     assert not [m for m in run_checks() if m.id == "snapnote.W002"]
+
+
+def test_key_is_saved_even_if_attachments_fail(jira, make_ticket, png):
+    ticket = make_ticket(screenshot=png())
+    with mock.patch("urllib.request.urlopen", fake_urlopen([], fail_attachments=True)):
+        notifiers.jira_issue(ticket, "")
+    ticket.refresh_from_db()
+    assert ticket.jira_key == "APP-7"
+
+
+def test_no_key_when_jira_fails(jira, make_ticket):
+    ticket = make_ticket()
+    with mock.patch("urllib.request.urlopen", side_effect=OSError("down")):
+        notifiers.run_notifiers(None, ticket, "")
+    ticket.refresh_from_db()
+    assert ticket.jira_key == "" and ticket.jira_url == ""
+
+
+def test_key_shown_in_views_admin_and_export(jira, manager_client, make_ticket, tmp_path):
+    from django.core.management import call_command
+
+    ticket = make_ticket(jira_key="APP-7")
+    link = 'href="https://acme.atlassian.net/browse/APP-7"'
+    assert link in manager_client.get(ticket.get_absolute_url()).content.decode()
+    assert link in manager_client.get("/snapnote/").content.decode()
+    assert list(type(ticket).objects.search("APP-7")) == [ticket]
+    call_command("snapnote_export", ticket.pk, output=str(tmp_path))
+    folder = tmp_path / f"ticket-{ticket.pk}"
+    assert "APP-7" in (folder / "ticket.md").read_text()
+    assert '"jira_key": "APP-7"' in (folder / "ticket.json").read_text()

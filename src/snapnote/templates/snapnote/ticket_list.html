@@ -11,7 +11,7 @@
   <table class="snapnote-table">
     <thead><tr>
       <th>#</th><th>{% trans "Title" %}</th><th>{% trans "Page" %}</th>
-      <th>{% trans "Reported by" %}</th><th>{% trans "Status" %}</th><th>{% trans "Created at" %}</th>
+      <th>Jira</th><th>{% trans "Reported by" %}</th><th>{% trans "Status" %}</th><th>{% trans "Created at" %}</th>
     </tr></thead>
     <tbody>
     {% for ticket in object_list %}
@@ -19,12 +19,13 @@
         <td>{{ ticket.pk }}</td>
         <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.title }}</a></td>
         <td>{{ ticket.page_path }}</td>
+        <td>{% if ticket.jira_url %}<a href="{{ ticket.jira_url }}" rel="noopener noreferrer">{{ ticket.jira_key }}</a>{% else %}{{ ticket.jira_key|default:"-" }}{% endif %}</td>
         <td>{{ ticket.reported_by|default:"-" }}</td>
         <td>{% include "snapnote/includes/status_badge.html" %}</td>
         <td>{{ ticket.created_at }}</td>
       </tr>
     {% empty %}
-      <tr><td colspan="6" class="snapnote-empty">{% trans "No tickets found." %}</td></tr>
+      <tr><td colspan="7" class="snapnote-empty">{% trans "No tickets found." %}</td></tr>
     {% endfor %}
     </tbody>
   </table>
