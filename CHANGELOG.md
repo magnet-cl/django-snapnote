@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
 - Jira failures are visible: `Ticket.jira_error` (migration `0003`), a "Jira failed" badge in the list and detail,
   a Jira filter in the list and admin, a **Retry Jira** button and `manage.py snapnote_retry_jira`.
