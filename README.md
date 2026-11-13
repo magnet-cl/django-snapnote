@@ -106,6 +106,27 @@ The text of a ticket is written by an end user, so `ticket.md` labels it as untr
 places it in code fences; still review any change an assistant proposes before merging it, and
 do not export into a repository you will commit (screenshots can contain sensitive data).
 
+## `/ticket` command for Claude Code
+
+```bash
+python manage.py snapnote_install_claude_command
+```
+
+Copies a `/ticket` command into `.claude/commands/ticket.md` of your project (and adds
+`.snapnote-tickets/` to `.gitignore`). Then, in Claude Code: `/ticket 42`. Claude exports the ticket,
+reads the text and the annotated screenshot, locates the code behind the page, writes a test,
+fixes the problem, runs your tests and opens a pull request, and stops there: it never merges,
+deploys or closes the ticket.
+
+The installed file is yours to edit. Its **Project settings** section sets the export command,
+test and lint commands, base branch and branch name. If tickets live in production, point the export
+command at a remote one (the file has an `ssh` example) so the folder lands in your checkout.
+Re-running the installer does not overwrite your edits unless you pass `--force`; do that after
+upgrading the package to get a newer template, and re-apply your settings.
+
+Ticket text is user-written, untrusted input: the command tells Claude to treat it only as a
+problem description. Always review the PR.
+
 ## Security and deployment notes
 
 - **Screenshots can contain sensitive data.** Serve `MEDIA_ROOT` only to authenticated staff (or use a

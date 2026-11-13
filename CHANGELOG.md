@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `snapnote_install_claude_command`: installs a `/ticket` command for Claude Code (fetch the ticket, fix it, open a PR).
+
 ## 0.2.1
 
 - Fix: the widget works with `CSRF_COOKIE_HTTPONLY = True` and `CSRF_USE_SESSIONS = True`. The CSRF token now
