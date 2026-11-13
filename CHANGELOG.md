@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0
 
 - `snapnote_install_claude_command`: installs a `/ticket` command for Claude Code (fetch the ticket, fix it, open a PR).
 
