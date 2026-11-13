@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0
 
 - The Jira notifier stores the issue key in `Ticket.jira_key` (new migration `0002`). It is shown, with a link, in the
   list and detail views and the admin, is searchable, and is included in `snapnote_export`.
