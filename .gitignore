@@ -53,3 +53,8 @@ Thumbs.db
 .pytest_cache/
 *.egg-info/
 build/
+
+.tags
+
+# claude
+.claude/settings.local.json
