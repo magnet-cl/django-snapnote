@@ -12,7 +12,12 @@ export type Payload = {
   annotations: Blob | null;
 };
 
-export async function sendReport(url: string, payload: Payload) {
+/** Token from the page props; the cookie is only a fallback (it may be HttpOnly). */
+export function resolveCsrfToken(propToken?: string): string {
+  return propToken || getCookie('csrftoken');
+}
+
+export async function sendReport(url: string, payload: Payload, csrfToken?: string) {
   const data = new FormData();
   data.append('title', payload.title);
   data.append('description', payload.description);
@@ -27,7 +32,7 @@ export async function sendReport(url: string, payload: Payload) {
     method: 'POST',
     body: data,
     credentials: 'same-origin',
-    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    headers: { 'X-CSRFToken': resolveCsrfToken(csrfToken) },
   });
   if (!response.ok) {
     throw new Error(`Snapnote request failed: ${response.status}`);

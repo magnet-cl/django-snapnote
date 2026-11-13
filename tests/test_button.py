@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_button_rendered_for_user(user_client):
     html = user_client.get("/").content.decode()
     assert 'id="snapnote-root"' in html
@@ -47,3 +50,28 @@ def test_unaccent_warning_only_without_postgres(settings):
     settings.SNAPNOTE_SEARCH_UNACCENT = True
     warned = any(m.id == "snapnote.W001" for m in run_checks())
     assert warned == (connection.vendor != "postgresql")
+
+
+def _props(response):
+    import json
+    import re
+
+    html = response.content.decode()
+    return json.loads(re.search(r'id="snapnote-props"[^>]*>(.*?)</script>', html, re.S).group(1))
+
+
+def test_props_include_csrf_token(user_client):
+    assert _props(user_client.get("/"))["csrf_token"]
+
+
+@pytest.mark.parametrize("option", ["CSRF_COOKIE_HTTPONLY", "CSRF_USE_SESSIONS"])
+def test_report_works_without_js_readable_cookie_using_props_token(user, settings, option):
+    from django.test import Client
+
+    setattr(settings, option, True)
+    client = Client(enforce_csrf_checks=True)
+    client.force_login(user)
+    token = _props(client.get("/"))["csrf_token"]
+    data = {"title": "t", "page_url": "http://testserver/"}
+    assert client.post("/snapnote/report/", data, HTTP_X_CSRFTOKEN=token).status_code == 201
+    assert client.post("/snapnote/report/", data).status_code == 403

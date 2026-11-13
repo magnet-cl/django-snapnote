@@ -34,6 +34,7 @@ export type Labels = {
 
 export type Props = {
   report_url: string;
+  csrf_token?: string;
   labels: Labels;
   max_upload_mb: number;
 };

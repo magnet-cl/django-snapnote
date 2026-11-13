@@ -117,7 +117,11 @@ do not export into a repository you will commit (screenshots can contain sensiti
   is inline) and `script-src` for the static bundle.
 - Uploads are validated (PNG/JPEG/WebP only, no SVG), size/dimension limited and re-encoded with Pillow.
 - `page_url` must be http(s) and is never rendered as a clickable link otherwise.
-- The report endpoint uses Django's CSRF protection; the template tag sets the cookie.
+- The report endpoint uses Django's CSRF protection. The widget is compatible with
+  `CSRF_COOKIE_HTTPONLY = True` and `CSRF_USE_SESSIONS = True`: the token is embedded in the page
+  (like `{% csrf_token %}` in a form), not read from the cookie. If you cache whole pages, a cached
+  token can go stale; exclude pages with the button from the cache or use per-user caching.
+- Behind a proxy, set `CSRF_TRUSTED_ORIGINS` and `SECURE_PROXY_SSL_HEADER` as Django requires.
 - Capture uses `getDisplayMedia` (desktop browsers). On mobile the user attaches an image.
 
 ## Development

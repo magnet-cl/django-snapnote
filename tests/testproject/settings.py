@@ -61,6 +61,7 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = tempfile.mkdtemp(prefix="snapnote-media-")
 MEDIA_URL = "/media/"
 LOGIN_URL = "/login/"
+CSRF_COOKIE_HTTPONLY = bool(os.environ.get("SNAPNOTE_E2E_HTTPONLY"))
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"

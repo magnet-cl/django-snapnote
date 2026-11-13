@@ -12,7 +12,7 @@ type Phase = 'idle' | 'capturing' | 'editing' | 'form';
  * capturing is not possible), lets them annotate it and sends a ticket. The
  * form stays mounted while editing so typed values survive.
  */
-export function App({ report_url: reportUrl, labels, max_upload_mb: maxMb }: Props) {
+export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_upload_mb: maxMb }: Props) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [screenshot, setScreenshot] = useState<Blob | null>(null);
   const [captureFailed, setCaptureFailed] = useState(false);
@@ -88,12 +88,11 @@ export function App({ report_url: reportUrl, labels, max_upload_mb: maxMb }: Pro
     }
     setSending(true);
     try {
-      await sendReport(reportUrl, {
-        title: title.trim(),
-        description,
-        screenshot,
-        annotations: layer,
-      });
+      await sendReport(
+        reportUrl,
+        { title: title.trim(), description, screenshot, annotations: layer },
+        csrfToken,
+      );
       reset();
       setMessage({ ok: true, text: labels.success });
     } catch {

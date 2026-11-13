@@ -16,16 +16,22 @@ const env = {
   DJANGO_SETTINGS_MODULE: 'tests.testproject.settings',
   PYTHONPATH: root,
 };
-const PORT = 8765;
-const base = `http://127.0.0.1:${PORT}`;
-
-execFileSync(python, ['-m', 'django', 'migrate', '-v0'], { env, cwd: root });
-const server = spawn(python, ['-m', 'django', 'runserver', `${PORT}`, '--noreload'], {
-  env, cwd: root, stdio: 'ignore',
-});
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-for (let i = 0; i < 50; i++) {
-  try { await fetch(base); break; } catch { await sleep(200); }
+let base = '';
+let port = 8765;
+
+async function startServer(extraEnv = {}) {
+  const serverEnv = { ...env, ...extraEnv, SNAPNOTE_E2E_DB: join(dir, `db-${port}.sqlite3`) };
+  execFileSync(python, ['-m', 'django', 'migrate', '-v0'], { env: serverEnv, cwd: root });
+  const child = spawn(python, ['-m', 'django', 'runserver', `${port}`, '--noreload'], {
+    env: serverEnv, cwd: root, stdio: 'ignore',
+  });
+  base = `http://127.0.0.1:${port}`;
+  port += 1;
+  for (let i = 0; i < 50; i++) {
+    try { await fetch(base); break; } catch { await sleep(200); }
+  }
+  return child;
 }
 
 const results = [];
@@ -40,8 +46,8 @@ const STUB = `
     return c.captureStream(20);
   };`;
 
-async function scenario(browser, { capture }) {
-  const label = capture ? 'with capture' : 'without getDisplayMedia';
+async function scenario(browser, { capture, httpOnly = false }) {
+  const label = (capture ? 'with capture' : 'without getDisplayMedia') + (httpOnly ? ' + HttpOnly CSRF cookie' : '');
   const context = await browser.newContext({ viewport: { width: 1000, height: 700 } });
   const page = await context.newPage();
   await page.addInitScript(capture ? STUB : "Object.defineProperty(navigator.mediaDevices, 'getDisplayMedia', { value: undefined });");
@@ -49,6 +55,11 @@ async function scenario(browser, { capture }) {
   const fab = page.locator('#snapnote-root .snapnote-fab');
   await fab.waitFor();
   check(`${label}: button renders inside shadow DOM`, (await fab.count()) === 1);
+  if (httpOnly) {
+    const cookie = (await context.cookies()).find((c) => c.name === 'csrftoken');
+    check(`${label}: csrftoken cookie exists and is HttpOnly`, !!cookie?.httpOnly);
+    check(`${label}: JS cannot read it`, !(await page.evaluate(() => document.cookie)).includes('csrftoken'));
+  }
   await fab.click();
 
   const title = `E2E ${label}`;
@@ -93,15 +104,21 @@ async function scenario(browser, { capture }) {
 }
 
 let browser;
+let server;
 try {
   browser = await chromium.launch({
     channel: process.env.CHROME_PATH ? undefined : 'chrome',
     executablePath: process.env.CHROME_PATH,
   });
+  server = await startServer();
   await scenario(browser, { capture: true });
   await scenario(browser, { capture: false });
+  server.kill();
+  // Hardened hosts: the CSRF cookie is HttpOnly, so the token must come from the page props.
+  server = await startServer({ SNAPNOTE_E2E_HTTPONLY: '1' });
+  await scenario(browser, { capture: true, httpOnly: true });
 } finally {
   await browser?.close();
-  server.kill();
+  server?.kill();
 }
 process.exit(results.every(([, ok]) => ok) ? 0 : 1);

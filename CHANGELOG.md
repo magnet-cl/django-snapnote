@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.1
 
+- Fix: the widget works with `CSRF_COOKIE_HTTPONLY = True` and `CSRF_USE_SESSIONS = True`. The CSRF token now
+  travels in the page props; reading the cookie is only a fallback.
 - `snapnote_export` command: exports tickets (markdown, JSON, images and an annotated composite) for people or AI assistants.
 
 ## 0.2.0

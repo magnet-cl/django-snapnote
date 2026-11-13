@@ -43,11 +43,14 @@ def snapnote_button(context):
     request = context.get("request")
     if request is None or not can_report(request):
         return {"show": False}
-    get_token(request)  # makes sure the CSRF cookie is set
+    # Also makes sure the CSRF cookie is set. The token travels in the props because the
+    # cookie may be unreadable from JS (CSRF_COOKIE_HTTPONLY) or absent (CSRF_USE_SESSIONS).
+    csrf_token = get_token(request)
     return {
         "show": True,
         "props": {
             "report_url": reverse("snapnote:report"),
+            "csrf_token": csrf_token,
             "labels": get_labels(),
             "max_upload_mb": conf.get("MAX_UPLOAD_MB"),
         },
