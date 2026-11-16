@@ -42,6 +42,7 @@ Then `python manage.py migrate`. Uploaded images use your `MEDIA_ROOT`/storage.
 | `SNAPNOTE_MAX_DIMENSION` | `8000` | Max width/height in pixels |
 | `SNAPNOTE_UPLOAD_TO` | `"snapnote/"` | Prefix in the storage |
 | `SNAPNOTE_THROTTLE` | `"10/hour"` | Reports per user (`second`, `minute`, `hour`, `day`); uses Django's cache. `None` disables |
+| `SNAPNOTE_JIRA_READ_EMAIL`, `SNAPNOTE_JIRA_READ_API_TOKEN` | `""` | Optional read-only credentials for `snapnote_jira_export` (default: the `SNAPNOTE_JIRA_*` ones) |
 | `SNAPNOTE_BASE_URL` | `""` | Public site URL used to link tickets from Jira issues created by `snapnote_retry_jira` |
 | `SNAPNOTE_AUTO_INJECT` | `False` | Also add `snapnote.middleware.AutoInjectMiddleware` to `MIDDLEWARE` to insert the button automatically. Incompatible with strict CSP and streaming responses |
 
@@ -125,6 +126,24 @@ The text of a ticket is written by an end user, so `ticket.md` labels it as untr
 places it in code fences; still review any change an assistant proposes before merging it, and
 do not export into a repository you will commit (screenshots can contain sensitive data).
 
+## Export a Jira issue (no database needed)
+
+```bash
+python manage.py snapnote_jira_export APP-7          # one or more keys
+python manage.py snapnote_jira_export APP-7 --comments
+```
+
+Reads the issue from Jira (read only) and writes `snapnote-export/jira-APP-7/` with `ticket.md`,
+`ticket.json`, the image attachments and, when the Jira notifier attached them,
+`screenshot_annotated.png`. It reuses your `SNAPNOTE_JIRA_*` settings, so the credentials stay in
+your Django settings and an AI assistant that runs the command never needs to be given them.
+Optionally set `SNAPNOTE_JIRA_READ_EMAIL` / `SNAPNOTE_JIRA_READ_API_TOKEN` to use a read-only account.
+
+Only keys of `SNAPNOTE_JIRA_PROJECT` are accepted, non-image attachments are skipped and comments are
+left out unless you pass `--comments` (anyone with access to the project can write them, so they are
+untrusted text). Everything is labelled as untrusted data in `ticket.md`. The credentials still exist
+on the machine where the command runs; use a read-only account and keep them out of the repository.
+
 ## `/ticket` command for Claude Code
 
 ```bash
@@ -132,7 +151,7 @@ python manage.py snapnote_install_claude_command
 ```
 
 Copies a `/ticket` command into `.claude/commands/ticket.md` of your project (and adds
-`.snapnote-tickets/` to `.gitignore`). Then, in Claude Code: `/ticket 42`. Claude exports the ticket,
+`.snapnote-tickets/` to `.gitignore`). Then, in Claude Code: `/ticket 42`. Claude exports the ticket (`/ticket APP-7` takes a Jira key and uses `snapnote_jira_export`),
 reads the text and the annotated screenshot, locates the code behind the page, writes a test,
 fixes the problem, runs your tests and opens a pull request, and stops there: it never merges,
 deploys or closes the ticket.

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `snapnote_jira_export`: reads a Jira issue (read only, optional separate read credentials) into the same folder
+  format as `snapnote_export`, so `/ticket APP-7` works without database or SSH access.
+- The `/ticket` template accepts a Jira key. Re-run `snapnote_install_claude_command --force` to get it
+  (your local edits to the file will be overwritten).
+
 ## 0.5.0
 
 - Jira failures are visible: `Ticket.jira_error` (migration `0003`), a "Jira failed" badge in the list and detail,

@@ -22,6 +22,9 @@ DEFAULTS = {
     "JIRA_LABELS": ["snapnote"],
     "JIRA_ATTACH_IMAGES": True,
     "JIRA_TIMEOUT": 10,
+    # Optional read-only credentials for snapnote_jira_export; default to the JIRA_* ones above.
+    "JIRA_READ_EMAIL": "",
+    "JIRA_READ_API_TOKEN": "",
     # Public site URL (e.g. "https://intranet.example.com"), used to link tickets from Jira issues
     # created outside a request (snapnote_retry_jira).
     "BASE_URL": "",
@@ -44,3 +47,15 @@ JIRA_REQUIRED = ("JIRA_URL", "JIRA_EMAIL", "JIRA_API_TOKEN", "JIRA_PROJECT")
 def jira_enabled():
     """True if the Jira notifier is active and fully configured."""
     return JIRA_NOTIFIER in get("NOTIFIERS") and all(get(name) for name in JIRA_REQUIRED)
+
+
+def jira_read_credentials():
+    """(email, token) used to read issues: the read-only pair if set, else the main one."""
+    if get("JIRA_READ_API_TOKEN"):
+        return get("JIRA_READ_EMAIL") or get("JIRA_EMAIL"), get("JIRA_READ_API_TOKEN")
+    return get("JIRA_EMAIL"), get("JIRA_API_TOKEN")
+
+
+def jira_read_configured():
+    email, token = jira_read_credentials()
+    return bool(get("JIRA_URL") and get("JIRA_PROJECT") and email and token)

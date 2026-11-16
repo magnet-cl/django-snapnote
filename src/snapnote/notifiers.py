@@ -67,7 +67,13 @@ def short_error(exc):
         text = f"Connection error: {exc.reason}"
     else:
         text = f"{type(exc).__name__}: {exc}"
-    for secret in (conf.get("JIRA_API_TOKEN"), conf.get("JIRA_EMAIL")):
+    secrets = (
+        conf.get("JIRA_API_TOKEN"),
+        conf.get("JIRA_EMAIL"),
+        conf.get("JIRA_READ_API_TOKEN"),
+        conf.get("JIRA_READ_EMAIL"),
+    )
+    for secret in secrets:
         if secret:
             text = text.replace(secret, "***")
     return " ".join(text.split())[:300]

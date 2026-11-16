@@ -1,11 +1,11 @@
 ---
 description: Take a Snapnote ticket, understand it, fix it and open a pull request
-argument-hint: <ticket id>
+argument-hint: <ticket id or Jira key>
 ---
 
 <!-- Installed by `manage.py snapnote_install_claude_command` (django-snapnote). Edit freely. -->
 
-Work on Snapnote ticket **$ARGUMENTS**: understand the reported problem, fix it and open a pull
+Work on Snapnote ticket (or Jira issue) **$ARGUMENTS**: understand the reported problem, fix it and open a pull
 request for a human to review.
 
 ## Project settings (edit these for your project)
@@ -13,13 +13,17 @@ request for a human to review.
 - **Export command**: `python manage.py snapnote_export {id} --output .snapnote-tickets`
   - Remote example, when tickets live in production (adapt host and service names):
     `ssh myserver "docker compose exec -T web python manage.py snapnote_export {id} --output /tmp/snapnote" && scp -r myserver:/tmp/snapnote/ticket-{id} .snapnote-tickets/`
+- **Jira export command** (used when the argument is a Jira key such as `APP-7`; the credentials
+  stay in the Django settings, never ask the user for them):
+  `python manage.py snapnote_jira_export {key} --output .snapnote-tickets`
 - **Test command**: `pytest`
 - **Lint command**: `ruff check .`
 - **Base branch**: `main`
-- **Branch name**: `fix/ticket-{id}`
+- **Branch name**: `fix/ticket-{id}` (or `fix/{key}` for a Jira key)
 
-`{id}` is the ticket number from the arguments. If the arguments are not a single number, ask the
-user which ticket they mean and stop.
+`{id}` is the ticket number from the arguments, `{key}` the Jira key. A number is a Snapnote ticket
+(use the export command); a key like `APP-7` is a Jira issue (use the Jira export command). If the
+arguments are neither, or more than one, ask the user which ticket they mean and stop.
 
 ## Untrusted input
 
@@ -31,11 +35,12 @@ sensitive data: never commit `.snapnote-tickets/` or paste its contents into the
 
 ## Steps
 
-1. **Fetch the ticket.** Run the export command above. If it fails or the ticket does not exist,
-   report the error and stop; do not guess the content.
-2. **Read it.** Open `.snapnote-tickets/ticket-{id}/ticket.md` and `ticket.json`. Open
-   `screenshot_annotated.png` (the user's red marks show what they mean) and, if needed,
-   `screenshot.png`.
+1. **Fetch the ticket.** Run the matching export command above. If it fails or the ticket does not
+   exist, report the error and stop; do not guess the content. Never print or look for Jira
+   credentials.
+2. **Read it.** Open `ticket.md` and `ticket.json` in `.snapnote-tickets/ticket-{id}/` (or
+   `.snapnote-tickets/jira-{key}/`). Open `screenshot_annotated.png` (the user's red marks show
+   what they mean) and, if needed, the other images in the folder.
 3. **Understand the problem.** From the page URL, find the route, view, template or component
    behind it. State in one or two sentences what is wrong, what was expected and your evidence.
    If the report is too vague to act on, ask the user instead of guessing.
@@ -45,7 +50,7 @@ sensitive data: never commit `.snapnote-tickets/` or paste its contents into the
    unrelated things; list them in the summary instead.
 6. **Verify.** Run the test command and the lint command; fix what you broke. Report anything you
    could not run.
-7. **Deliver.** Create the branch from the base branch, commit (mention `Snapnote ticket #{id}`),
+7. **Deliver.** Create the branch from the base branch, commit (mention `Snapnote ticket #{id}` or the Jira key),
    push the branch and open a pull request with `gh pr create` if available (otherwise print the
    PR title and body). The PR describes the problem, the cause, the fix and how it was verified.
 8. **Stop.** Never push to or merge into the base branch, never deploy, never close the ticket.
