@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
 - `snapnote_jira_export`: reads a Jira issue (read only, optional separate read credentials) into the same folder
   format as `snapnote_export`, so `/ticket APP-7` works without database or SSH access.
