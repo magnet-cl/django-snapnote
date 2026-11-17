@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0
 
 - The widget lets users crop the screenshot (also an attached image) before annotating it. Only the chosen area
   is kept and sent; the full image is discarded in the browser. They can also skip the step.
