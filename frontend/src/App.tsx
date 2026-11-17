@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { AnnotationEditor } from './AnnotationEditor';
+import { CropEditor } from './CropEditor';
 import { sendReport } from './api';
 import { captureScreen } from './capture';
 import { FlagIcon } from './icons';
 import { Props, Shape } from './types';
 
-type Phase = 'idle' | 'capturing' | 'editing' | 'form';
+type Phase = 'idle' | 'capturing' | 'cropping' | 'editing' | 'form';
 
 /**
  * Floating button that captures the tab (or lets the user attach an image when
@@ -63,7 +64,7 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
     setCaptureFailed(!blob);
     setShapes([]);
     setLayer(null);
-    setPhase(blob ? 'editing' : 'form');
+    setPhase(blob ? 'cropping' : 'form');
     if (!blob) setMessage({ ok: false, text: labels.noCapture });
   };
 
@@ -77,7 +78,7 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
     setScreenshot(file);
     setShapes([]);
     setLayer(null);
-    setPhase('editing');
+    setPhase('cropping');
   };
 
   const submit = async (event: React.FormEvent) => {
@@ -102,7 +103,7 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
     }
   };
 
-  const reporting = phase === 'editing' || phase === 'form';
+  const reporting = phase === 'cropping' || phase === 'editing' || phase === 'form';
 
   return (
     <>
@@ -127,7 +128,7 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
       {reporting && (
         <div
           className="snapnote-backdrop"
-          hidden={phase === 'editing'}
+          hidden={phase === 'cropping' || phase === 'editing'}
           role="dialog"
           aria-modal="true"
           aria-label={labels.report}
@@ -204,6 +205,18 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
             </div>
           </form>
         </div>
+      )}
+
+      {phase === 'cropping' && screenshot && (
+        <CropEditor
+          screenshot={screenshot}
+          labels={labels}
+          onDone={(cropped) => {
+            if (cropped) setScreenshot(cropped);
+            setPhase('editing');
+          }}
+          onCancel={() => setPhase('form')}
+        />
       )}
 
       {phase === 'editing' && screenshot && (

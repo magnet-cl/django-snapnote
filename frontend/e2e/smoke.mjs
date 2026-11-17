@@ -64,9 +64,20 @@ async function scenario(browser, { capture, httpOnly = false }) {
 
   const title = `E2E ${label}`;
   if (capture) {
-    await page.locator('.snapnote-editor').waitFor();
-    const canvas = page.locator('.snapnote-editor-canvas');
+    const crop = page.locator('.snapnote-crop-canvas');
+    await crop.waitFor();
+    check(`${label}: crop step shown first`, (await crop.count()) === 1);
+    const cropBox = await crop.boundingBox();
+    // Drag from the middle of the image (outside nothing: the full image is selected, so
+    // grab the top-left handle and pull it inwards to keep roughly the bottom-right half).
+    await page.mouse.move(cropBox.x + 1, cropBox.y + 1);
+    await page.mouse.down();
+    await page.mouse.move(cropBox.x + cropBox.width / 2, cropBox.y + cropBox.height / 2, { steps: 5 });
+    await page.mouse.up();
+    await page.getByRole('button', { name: 'Crop', exact: true }).click();
+    const canvas = page.locator('.snapnote-editor-canvas:not(.snapnote-crop-canvas)');
     await canvas.waitFor();
+    check(`${label}: annotation canvas has the cropped size`, (await canvas.evaluate((c) => c.width)) < 640);
     const box = await canvas.boundingBox();
     await page.mouse.move(box.x + 100, box.y + 100);
     await page.mouse.down();
@@ -82,7 +93,10 @@ async function scenario(browser, { capture, httpOnly = false }) {
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC', 'base64');
     const file = join(dir, 'm.png'); writeFileSync(file, png);
     await page.locator('input[type=file]').setInputFiles(file);
-    await page.locator('.snapnote-editor-canvas').waitFor();
+    await page.locator('.snapnote-crop-canvas').waitFor();
+    check(`${label}: uploaded image also goes through crop`, true);
+    await page.getByRole('button', { name: "Don't crop" }).click();
+    await page.locator('.snapnote-editor-canvas:not(.snapnote-crop-canvas)').waitFor();
     await page.getByRole('button', { name: 'Done' }).click();
     check(`${label}: uploaded image reaches the preview`, (await page.locator('.snapnote-preview img').count()) >= 1);
   }

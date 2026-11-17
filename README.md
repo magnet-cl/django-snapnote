@@ -1,7 +1,7 @@
 # django-snapnote
 
 Let your users report a problem from any page: a floating button captures the tab, lets them
-draw on it and creates a ticket you can review in the admin or in built-in views.
+crop it, draw on it and creates a ticket you can review in the admin or in built-in views.
 
 Requires only Django (4.2–5.2) and Pillow. No DRF, no Node, no build step for you. The widget is a
 self-contained bundle rendered in a Shadow DOM, so your CSS and ours don't interfere.

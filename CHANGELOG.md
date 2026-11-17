@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The widget lets users crop the screenshot (also an attached image) before annotating it. Only the chosen area
+  is kept and sent; the full image is discarded in the browser. They can also skip the step.
+- New labels (`crop`, `cropHint`, `applyCrop`, `resetCrop`, `skipCrop`) with Spanish translations.
+
 ## 0.6.0
 
 - `snapnote_jira_export`: reads a Jira issue (read only, optional separate read credentials) into the same folder

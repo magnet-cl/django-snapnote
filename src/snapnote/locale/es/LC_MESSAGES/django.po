@@ -143,6 +143,21 @@ msgstr "Listo"
 msgid "The title is required."
 msgstr "El título es obligatorio."
 
+msgid "Crop the screenshot"
+msgstr "Recortar la captura"
+
+msgid "Drag to choose the area to keep"
+msgstr "Arrastra para elegir el área que quieres conservar"
+
+msgid "Crop"
+msgstr "Recortar"
+
+msgid "Reset"
+msgstr "Restablecer"
+
+msgid "Don't crop"
+msgstr "No recortar"
+
 msgid "Tickets"
 msgstr "Tickets"
 

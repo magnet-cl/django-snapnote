@@ -30,6 +30,11 @@ export type Labels = {
   clear: string;
   done: string;
   titleRequired: string;
+  crop: string;
+  cropHint: string;
+  applyCrop: string;
+  resetCrop: string;
+  skipCrop: string;
 };
 
 export type Props = {

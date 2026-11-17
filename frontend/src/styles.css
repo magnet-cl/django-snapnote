@@ -68,3 +68,4 @@
   position: absolute; padding: 0 .25rem; font-family: sans-serif; font-weight: 700;
   color: var(--snapnote-accent); background: rgba(255, 255, 255, .85); border: 1px dashed var(--snapnote-accent); outline: 0;
 }
+.snapnote-crop-hint { font-size: .9rem; color: #323f4b; }

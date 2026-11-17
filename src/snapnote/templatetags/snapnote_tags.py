@@ -30,6 +30,11 @@ def get_labels():
         "clear": _("Clear all"),
         "done": _("Done"),
         "titleRequired": _("The title is required."),
+        "crop": _("Crop the screenshot"),
+        "cropHint": _("Drag to choose the area to keep"),
+        "applyCrop": _("Crop"),
+        "resetCrop": _("Reset"),
+        "skipCrop": _("Don't crop"),
     }
 
 

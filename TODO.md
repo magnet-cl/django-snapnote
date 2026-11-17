@@ -16,7 +16,7 @@ Things we want to do in django-snapnote. Mark with `[x]` when done and move the 
 - [ ] Slack notifier (`snapnote.notifiers.slack`) via incoming webhook, stdlib only (`urllib`, no Slack SDK), with a
   system check for the missing `SNAPNOTE_SLACK_WEBHOOK_URL` setting. Ticket text is untrusted: escape it for Slack mrkdwn.
 - [ ] Sync Jira status back into the ticket (read only, using `snapnote.jira`).
-- [ ] Crop the screenshot in the widget before sending, so the user can keep only the relevant area. The crop must be
+- [x] Crop the screenshot in the widget before sending, so the user can keep only the relevant area. The crop must be
   applied to the image itself (not just hidden), and it also helps with sensitive data (see the section below).
 - [ ] Capture extra context in the widget (console errors, failed requests, viewport/browser info).
 - [ ] More translations in `locale/` (only `es` exists besides English).
