@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The report button no longer closes what the user wants to show in the screenshot: it doesn't take focus and its
+  mouse/click events don't reach the host page's "click outside" handlers (e.g. open Bootstrap dropdowns stay open).
+
 ## 0.7.0
 
 - The widget lets users crop the screenshot (also an attached image) before annotating it. Only the chosen area

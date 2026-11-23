@@ -18,6 +18,11 @@ Things we want to do in django-snapnote. Mark with `[x]` when done and move the 
 - [ ] Sync Jira status back into the ticket (read only, using `snapnote.jira`).
 - [x] Crop the screenshot in the widget before sending, so the user can keep only the relevant area. The crop must be
   applied to the image itself (not just hidden), and it also helps with sensitive data (see the section below).
+- [ ] Delayed capture for page state the flag can't preserve (hover menus, selects, anything that closes when the
+  mouse leaves or the share dialog appears). After the user accepts the share dialog, hide the widget and count down
+  (3-5 s, small chip excluded from the frame) so they can open what they want to show; then grab the frame. Make it
+  configurable with `SNAPNOTE_CAPTURE_DELAY` (0 = capture immediately, as today; add to `conf.py` DEFAULTS, the
+  template tag props and the README table). Complements the focus/click fix in Unreleased.
 - [ ] Capture extra context in the widget (console errors, failed requests, viewport/browser info).
 - [ ] More translations in `locale/` (only `es` exists besides English).
 

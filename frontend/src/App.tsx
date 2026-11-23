@@ -56,6 +56,14 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
     setMessage(null);
   };
 
+  // The host page may have something open that the user wants to show (a Bootstrap dropdown, a
+  // select...). Don't steal its focus and don't let the click reach the page's document-level
+  // "click outside" handlers, which would close it before the capture. React 18 listens on the
+  // container inside the Shadow DOM, so stopping the native event here keeps it from `document`.
+  const keepPageState = (event: React.SyntheticEvent) => {
+    event.nativeEvent.stopPropagation();
+  };
+
   const start = async () => {
     setMessage(null);
     setPhase('capturing');
@@ -113,7 +121,15 @@ export function App({ report_url: reportUrl, csrf_token: csrfToken, labels, max_
           className="snapnote-fab"
           title={labels.report}
           aria-label={labels.report}
-          onClick={start}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            keepPageState(event);
+          }}
+          onPointerDown={keepPageState}
+          onClick={(event) => {
+            keepPageState(event);
+            void start();
+          }}
         >
           <FlagIcon />
         </button>
