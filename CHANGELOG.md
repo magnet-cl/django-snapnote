@@ -4,6 +4,8 @@
 
 - The report button no longer closes what the user wants to show in the screenshot: it doesn't take focus and its
   mouse/click events don't reach the host page's "click outside" handlers (e.g. open Bootstrap dropdowns stay open).
+- Slack notifier `snapnote.notifiers.slack` (incoming webhook, stdlib only, no images, text escaped for mrkdwn).
+  New settings `SNAPNOTE_SLACK_WEBHOOK_URL` and `SNAPNOTE_SLACK_TIMEOUT`; system check `snapnote.W003`.
 
 ## 0.7.0
 

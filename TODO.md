@@ -13,11 +13,16 @@ Things we want to do in django-snapnote. Mark with `[x]` when done and move the 
 
 - [ ] Ticket status workflow beyond the current states (assignee, comments, history).
 - [ ] More notifiers (generic webhook, other trackers) behind the existing notifier interface, without adding dependencies.
-- [ ] Slack notifier (`snapnote.notifiers.slack`) via incoming webhook, stdlib only (`urllib`, no Slack SDK), with a
+- [x] Slack notifier (`snapnote.notifiers.slack`) via incoming webhook, stdlib only (`urllib`, no Slack SDK), with a
   system check for the missing `SNAPNOTE_SLACK_WEBHOOK_URL` setting. Ticket text is untrusted: escape it for Slack mrkdwn.
 - [ ] Sync Jira status back into the ticket (read only, using `snapnote.jira`).
 - [x] Crop the screenshot in the widget before sending, so the user can keep only the relevant area. The crop must be
   applied to the image itself (not just hidden), and it also helps with sensitive data (see the section below).
+- [ ] Record server errors (HTTP 500) automatically as a ticket to resolve, with the exception, traceback summary, URL and
+  user. Group repeated errors into one ticket (counter) instead of creating one per occurrence. Traceback and request
+  data may hold sensitive values: scrub them and treat them as untrusted when rendering/exporting.
+- [ ] Merge tickets: when two people report the same problem, merge one ticket into another, keeping the reporters,
+  comments and images of both, with a link/trace of the merge (needs a new migration).
 - [ ] Delayed capture for page state the flag can't preserve (hover menus, selects, anything that closes when the
   mouse leaves or the share dialog appears). After the user accepts the share dialog, hide the widget and count down
   (3-5 s, small chip excluded from the frame) so they can open what they want to show; then grab the frame. Make it
@@ -25,6 +30,10 @@ Things we want to do in django-snapnote. Mark with `[x]` when done and move the 
   template tag props and the README table). Complements the focus/click fix in Unreleased.
 - [ ] Capture extra context in the widget (console errors, failed requests, viewport/browser info).
 - [ ] More translations in `locale/` (only `es` exists besides English).
+- [ ] Separate React and Angular components, installable from npm, for projects where Django is only the backend and
+  the frontend is a web framework (SPA). Today the widget ships as a bundle injected by the Django template tag. The
+  components should talk to the existing ticket endpoints (needs a documented, stable API, CSRF/session or token auth,
+  and CORS guidance), reuse the capture/annotate/crop core instead of duplicating it, and keep the Shadow DOM isolation.
 
 ## Sensitive and confidential information
 

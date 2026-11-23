@@ -43,6 +43,7 @@ Then `python manage.py migrate`. Uploaded images use your `MEDIA_ROOT`/storage.
 | `SNAPNOTE_UPLOAD_TO` | `"snapnote/"` | Prefix in the storage |
 | `SNAPNOTE_THROTTLE` | `"10/hour"` | Reports per user (`second`, `minute`, `hour`, `day`); uses Django's cache. `None` disables |
 | `SNAPNOTE_JIRA_READ_EMAIL`, `SNAPNOTE_JIRA_READ_API_TOKEN` | `""` | Optional read-only credentials for `snapnote_jira_export` (default: the `SNAPNOTE_JIRA_*` ones) |
+| `SNAPNOTE_SLACK_WEBHOOK_URL`, `SNAPNOTE_SLACK_TIMEOUT` | `""`, `10` | Incoming webhook (required) and HTTP timeout of the Slack notifier |
 | `SNAPNOTE_BASE_URL` | `""` | Public site URL used to link tickets from Jira issues created by `snapnote_retry_jira` |
 | `SNAPNOTE_AUTO_INJECT` | `False` | Also add `snapnote.middleware.AutoInjectMiddleware` to `MIDDLEWARE` to insert the button automatically. Incompatible with strict CSP and streaming responses |
 
@@ -61,13 +62,28 @@ The signal `snapnote.signals.ticket_created(sender, ticket, request_url)` is sen
 A notifier is any callable; a failing one is logged and never breaks the report:
 
 ```python
-# myproject/notifiers.py — Slack recipe
+# myproject/notifiers.py — custom notifier recipe (Slack is built in, see below)
 import requests
 def slack(ticket, url):
     requests.post(settings.SLACK_WEBHOOK, json={"text": f"New ticket: {ticket.title} {url}"}, timeout=5)
 
 SNAPNOTE_NOTIFIERS = ["snapnote.notifiers.email", "myproject.notifiers.slack"]
 ```
+
+### Slack notifier
+
+Built in, opt-in and dependency-free (stdlib only). It posts a short summary (title, description, page URL,
+reporter and a link to the ticket) to a Slack [incoming webhook](https://api.slack.com/messaging/webhooks).
+Images are never sent. Ticket text is untrusted: it is escaped for Slack mrkdwn (so `<!channel>` or links
+typed by a user are shown as plain text).
+
+```python
+SNAPNOTE_NOTIFIERS = ["snapnote.notifiers.email", "snapnote.notifiers.slack"]
+SNAPNOTE_SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
+```
+
+`manage.py check` warns (`snapnote.W003`) if the webhook URL is missing. A failure is logged without the
+webhook URL and never breaks the report. Notifiers run synchronously after commit.
 
 ### Jira notifier
 

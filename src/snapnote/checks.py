@@ -32,4 +32,12 @@ def check_settings(app_configs, **kwargs):
                     id="snapnote.W002",
                 )
             )
+    if "snapnote.notifiers.slack" in notifiers and not conf.get("SLACK_WEBHOOK_URL"):
+        messages.append(
+            Warning(
+                "The Slack notifier is enabled but misconfigured.",
+                hint="Missing settings: SNAPNOTE_SLACK_WEBHOOK_URL",
+                id="snapnote.W003",
+            )
+        )
     return messages

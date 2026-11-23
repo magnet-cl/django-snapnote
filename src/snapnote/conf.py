@@ -25,6 +25,9 @@ DEFAULTS = {
     # Optional read-only credentials for snapnote_jira_export; default to the JIRA_* ones above.
     "JIRA_READ_EMAIL": "",
     "JIRA_READ_API_TOKEN": "",
+    # Slack notifier (snapnote.notifiers.slack): incoming webhook URL (required).
+    "SLACK_WEBHOOK_URL": "",
+    "SLACK_TIMEOUT": 10,
     # Public site URL (e.g. "https://intranet.example.com"), used to link tickets from Jira issues
     # created outside a request (snapnote_retry_jira).
     "BASE_URL": "",
@@ -41,6 +44,7 @@ def get_callable(name):
 
 
 JIRA_NOTIFIER = "snapnote.notifiers.jira_issue"
+SLACK_REQUIRED = ("SLACK_WEBHOOK_URL",)
 JIRA_REQUIRED = ("JIRA_URL", "JIRA_EMAIL", "JIRA_API_TOKEN", "JIRA_PROJECT")
 
 

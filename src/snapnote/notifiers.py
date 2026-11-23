@@ -36,6 +36,49 @@ def email(ticket, absolute_url):
 
 
 JIRA_REQUIRED = conf.JIRA_REQUIRED
+SLACK_REQUIRED = conf.SLACK_REQUIRED
+
+
+def _slack_escape(text):
+    """Escapes the three characters Slack mrkdwn treats as control (&, <, >).
+
+    This also defuses <!channel>, <!here> and <@U123> mentions in untrusted text.
+    """
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def slack(ticket, absolute_url):
+    """Posts a short summary of the ticket to a Slack incoming webhook (no images).
+
+    The ticket text is untrusted user input; it is escaped for Slack mrkdwn.
+    """
+    lines = [f"*{_slack_escape(ticket.title[:200])}*"]
+    if ticket.description:
+        description = ticket.description
+        if len(description) > 500:
+            description = description[:500] + "..."
+        lines.append(_slack_escape(description))
+    page = ticket.safe_page_url
+    if page:
+        lines.append("Page: <" + _slack_escape(page).replace("|", "%7C") + ">")
+    elif ticket.page_url:
+        lines.append(f"Page: {_slack_escape(ticket.page_url)}")
+    if ticket.reported_by_id:
+        lines.append(f"Reported by: {_slack_escape(str(ticket.reported_by))}")
+    if absolute_url:
+        lines.append("<" + absolute_url.replace("|", "%7C") + f"|Snapnote ticket #{ticket.pk}>")
+    request = urllib.request.Request(
+        conf.get("SLACK_WEBHOOK_URL"),
+        data=json.dumps({"text": "\n".join(lines)}).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=conf.get("SLACK_TIMEOUT")):  # noqa: S310
+            pass
+    except Exception as exc:
+        # The webhook URL is a secret: re-raise without it in the message or the traceback.
+        raise RuntimeError(f"Slack notifier failed: {short_error(exc)}") from None
 
 
 def _jira_request(path, data, content_type, extra_headers=None):
@@ -72,6 +115,7 @@ def short_error(exc):
         conf.get("JIRA_EMAIL"),
         conf.get("JIRA_READ_API_TOKEN"),
         conf.get("JIRA_READ_EMAIL"),
+        conf.get("SLACK_WEBHOOK_URL"),
     )
     for secret in secrets:
         if secret:
